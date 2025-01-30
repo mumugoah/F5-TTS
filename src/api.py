@@ -14,22 +14,16 @@ task_queue = queue.Queue()
 # 记录任务状态: {task_id: {"status": "pending/in_progress/done/error", "filepath": "xxx"}}
 task_status: Dict[str, Dict] = {}
 
-<<<<<<< HEAD
 # 设置worker线程数
 NUM_WORKERS = 2  # 可以根据GPU显存和负载情况调整
 
-=======
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
 # 这里放音频文件的存储目录
 AUDIO_DIR = "output"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-<<<<<<< HEAD
 # 添加信号量控制同时运行的任务数
 gpu_semaphore = threading.Semaphore(NUM_WORKERS)
 
-=======
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
 app = FastAPI()
 
 # ========== 2. 后台线程：从队列中取任务，执行 TTS 函数 ==========
@@ -39,15 +33,10 @@ def background_worker():
         # 更新状态 -> in_progress
         task_status[task_id]["status"] = "in_progress"
         try:
-<<<<<<< HEAD
             # 获取信号量
             with gpu_semaphore:
                 # 调用TTS函数
                 tts_function(text, file_path)
-=======
-            # 调用TTS函数（示例中只是模拟耗时）
-            tts_function(text, file_path)
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
             # 成功 -> done
             task_status[task_id]["status"] = "done"
         except Exception as e:
@@ -56,7 +45,6 @@ def background_worker():
         finally:
             task_queue.task_done()
 
-<<<<<<< HEAD
 def start_workers():
     """启动多个worker线程"""
     for _ in range(NUM_WORKERS):
@@ -65,21 +53,12 @@ def start_workers():
 
 # 启动多个worker线程
 start_workers()
-=======
-# 先起一个后台线程来跑
-worker_thread = threading.Thread(target=background_worker, daemon=True)
-worker_thread.start()
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
 
 
 # ========== 3. 模拟TTS函数（在这里替换成你真正的TTS逻辑） ==========
 f5tts = F5TTS(
     ckpt_file="../ckpts/mumu_last_reduced2.pt",
-<<<<<<< HEAD
     device="cuda",
-=======
-    device="mps",
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
 )
 
 def tts_function(text: str, file_path: str):
@@ -89,15 +68,10 @@ def tts_function(text: str, file_path: str):
             ref_text="当在观看的疼痛达到最难忍受的高峰时，若能熬得过，例如再忍五分钟，你将发现这椎心刺骨、威胁生命的疼痛开始消退。",
             gen_text=text,
             file_wave=file_path,
-<<<<<<< HEAD
             nfe_step=42,
             cross_fade_duration=0.2,
             seed=-1,
             speed=0.95,
-=======
-            nfe_step=6,
-            seed=-1,
->>>>>>> 07bd968fca0d65cb3d80059a6f0a2915ab399707
         )
     except Exception as e:
         raise "生成失败" + e
